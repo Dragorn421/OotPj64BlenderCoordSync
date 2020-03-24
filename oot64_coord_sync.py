@@ -114,7 +114,8 @@ def updatePosition(obj):
 	ry = int(parts[4])
 	rz = int(parts[5])
 
-	f = 1 # scale coordinates
+	global scale
+	f = scale # scale coordinates
 	# oot x is blender x
 	# oot y is blender z (vertical)
 	# oot z is blender -y
@@ -129,17 +130,19 @@ def applyPosition(obj):
 	socket_ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	socket_.connect(('127.0.0.1', 80))
 
+	global scale
+	f = 1/scale
 	# send data
 	bin = bytearray()
 	bin.append(2) # 2 for set
 	# oot x is blender x
-	bin.extend(str(obj.location[0]).encode())
+	bin.extend(str(f*obj.location[0]).encode())
 	bin.extend(b' ')
 	# oot y is blender z (vertical)
-	bin.extend(str(obj.location[2]).encode())
+	bin.extend(str(f*obj.location[2]).encode())
 	bin.extend(b' ')
 	# oot z is blender -y
-	bin.extend(str(-obj.location[1]).encode())
+	bin.extend(str(-f*obj.location[1]).encode())
 	bin.extend(b' ')
 	i = 0
 	while i < len(bin):
